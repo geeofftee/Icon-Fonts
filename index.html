@@ -16,6 +16,7 @@
   <!-- Included CSS Files (Uncompressed) -->
   
   <link rel="stylesheet" href="css/foundation.css">
+  <link rel="stylesheet" href="css/font-awesome.css">
   
   
   <!-- Included CSS Files (Compressed) -->
@@ -24,30 +25,122 @@
   <!--[if lt IE 9]>
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
-  <script type="text/javascript" src="http://use.typekit.com/obj3vgv.js"></script>
-  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
   <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
 </head>
 <body>
   <section class="row">
-    <h1>A level 1 header.</h1>
-    <h2>A level 2 header.</h2>
-    <h3>A level 2 header.</h3>
-    <p>Body copy.</p>
-    <p class="small">Small copy.</p>
-    <h3>Unordered list</h3>
+    <h1>
+    Icon fonts: the case for classes</h1>
+    <h2>Semantics</h2>
+    .icon-name is leagues more semantic and readable in the HTML than a unicode character. Which piece of code gives you the clearest idea of what it does?</p>
+    <div class="code-snippets" data-color="blue">
+    <code>&lt;span data-icon="&amp;#59171;"&gt;</code><br>
+    <code>&lt;span data-icon="a"&gt;</code><br>
+    <code>&lt;span class="icon-timer"&gt;</code>
+    </div>
+    <p>If you inherited a piece of code to work with, what would you rather see? The class name is easier to remember, and easier to find than a unicode when you don't remember.</p>
+    <p>I've had instances where I have multiple spans in my code with data-icon attributes with values like "a", "h", etc. If I don't remember or know what those letters represent, I'm forced to look at the surrounding HTML structure to deduce what those icons are. The antithesis of semantic.</p>
+    <p>Also, you will inevitebly need to style an icon specific to some module (like the play button in my timer). In the CSS:<p>
+    <div class="code-snippets">
+    <code>.some-class-selector [data-icon]:before {some declerations}</code></div> 
+    <p>This is not very descriptive at all. What icon is that styling? If you have multiple icons in your module, that would select all of them under .some-class-selector, and this forces you to be even more specific, which means making classes anyways, after going to all that trouble to avoid it. Whereas using classes for your icons allows you to do</p> 
+    <div class="code-snippets"><code>.some-class-selector .icon-plus {some declerations}</code></div>
+    <p>Nice, I can tell right away that I am styling the plus icon.</p>
+    <h2>Maintainability</h2>
+    <p>Put the unicodes in the CSS, then you never have to touch it, remember it, track it down, or copy paste it ever again, unless you change that icon's key mapping. In which case you change it in <strong><em>one</em></strong> spot, <strong><em>one</em></strong> time, and it applies globally across your app or website. Pretty DRY, no?</p>
+    <p>Put the unicode inline and you're asking for headaches. If you have an instance of an icon repeating itself multiple times in a page, and then multiple times across pages, you have to manually change each instance's data-icon attribute if you ever need to use a different unicode. </p>
+    <p>We don't use inline styles, so why would we declare a data-attribute inline if we know it's going to be reused? Use a class, it's what they're for. The data-icon method is inserting the content via CSS already anyway:
+    </p>
+    <div class="code-snippets">
+    <code data-color="blue">content: attr('data-icon');</code></div>
+    <p>By using the data-icon method, you're effectively declaring the content property inline in your HTML markup.
+    <h2>Real World Examples</h2>
+    <p><a href="http://www.zurb.com/playground/foundation-icons" target="_blank">Foundation from Zurb</a> is using the class method. So is <a href="http://twitter.github.com/bootstrap/base-css.html#icons" target="_blank">Twitter Bootstrap.</a></p>
+    <h2>Tools</h2>
+    <p>Tools do exist to make class generation a bit easier.The IcoMoon app is free, and it spits out the classes for you. We could also harness already existing frameworks like bootstrap's font awesome, which comes with all of the classes built already.</p>
+    <div class="code-snippets">
+    <code>.icon-plus:before {content: "\2b";}</code>
+    </div>
     <ul>
-      <li>Item 1</li>
-      <li>Item 2</li>
-      <li>Item 3</li>
+      <li>
+        <span class="icomoon-icon-paper" aria-hidden="true"></span>&nbsp;Paper - Icomoon
+      </li>
+      <li>
+        <span class="icomoon-icon-globe" aria-hidden="true"></span>&nbsp;Globe - Icomoon
+      </li>
+      <li>
+        <span class="icomoon-icon-plus" aria-hidden="true"></span>&nbsp;Plus - Icomoon
+      </li>
     </ul>
-    <h3>Ordered list</h3>
-    <ol>
-      <li>Item 1</li>
-      <li>Item 2</li>
-      <li>Item 3</li>
-    </ol>
-    <a href="#">A link</a>
+    <ul>
+      <li>
+        <span class="fontawesome-icon-plus" aria-hidden="true"></span>&nbsp;Plus - font-awesome
+      </li>
+      <li>
+        <span class="fontawesome-icon-cog" aria-hidden="true"></span>&nbsp;Cog - font-awesome
+      </li>
+      <li>
+        <span class="fontawesome-icon-search" aria-hidden="true"></span>&nbsp;Search - font-awesome
+      </li>
+    </ul>
+    <ul>
+      <li>
+        <span class="entypo-icon-earth" aria-hidden="true"></span>&nbsp;Earth - entypo
+      </li>
+      <li>
+        <span class="entypo-icon-play" aria-hidden="true"></span>&nbsp;Play - entypo
+      </li>
+      <li>
+        <span class="entypo-icon-pause" aria-hidden="true"></span>&nbsp;Pause - entypo
+      </li>
+    </ul>
+
+    <h2>Ideas</h2>
+    <p>We should stick to the structure outlined by Chris Coyier, but use a class instead:</p>
+    <div class="code-snippets">
+      <code>&lt;h1&gt;<br>&lt;span aria-hidden="true" class="icon-earth"&gt;&lt;/span&gt;<br>Hello<br>&lt;/h1&gt;</code>
+    </div>
+    <p>We only ever use the :before pseudo element, and control whether the icon comes before or after the text by changing where the span is inserted. The above code gives:</p>
+    <h1><span class="entypo-icon-earth" aria-hidden="true"></span> Hello</h1>
+    <p>To make the globe appear after the text you can do:</p>
+    <div class="code-snippets">
+      <code>&lt;h1&gt;<br>Hello<br>&lt;span aria-hidden="true" class="icon-earth"&gt;&lt;/span&gt;<br>&lt;/h1&gt;</code>
+    </div>
+    <h1>Hello <span class="entypo-icon-earth" aria-hidden="true"></span></h1>
+    <p>And of course, when you don't have accompanying text to describe the icon:</p>
+    <div class="code-snippets">
+      <code>&lt;h1&gt;<br>&lt;span aria-hidden="true" class="icon-earth"&gt;&lt;/span&gt;<br>&lt;span aria-hidden="true" class="screen-reader-text"&gt;Earth&lt;/span&gt;<br>&lt;/h1&gt;</code>
+    </div>
+    <h1 href="#bla">
+      <span class="entypo-icon-earth" aria-hidden="true"></span>
+      <span class="screen-reader-text" aria-hidden="true"></span>
+    </h1>
+
+<!--     <ul>
+      <li>
+        <span class="icon-paper" aria-hidden="true"></span>&nbsp;Paper
+      </li>
+      <li>
+        <span class="icon-globe" aria-hidden="true"></span>&nbsp;Globe
+      </li>
+      <li>
+        <span class="icon-plus" aria-hidden="true"></span>&nbsp;Plus
+      </li>
+      <li>
+        <span class="icon-plus" aria-hidden="true"></span>&nbsp;Plus
+      </li>
+      <li>
+        <span class="icon-pause" aria-hidden="true"></span>&nbsp;Pause
+      </li>
+      <li>
+        <span class="icon-search" aria-hidden="true"></span>&nbsp;Search
+      </li>
+      <li>
+        <span class="icon-list" aria-hidden="true"></span>&nbsp;List
+      </li>
+      <li>
+        <span class="icon-fuck" aria-hidden="true"></span>&nbsp;List
+      </li> -->
   </section>
   
 
